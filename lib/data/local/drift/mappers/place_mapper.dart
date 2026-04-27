@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:tag4u/data/local/drift/app_database.dart';
 import 'package:tag4u/domain/entities/place_node.dart';
 import 'package:tag4u/domain/entities/semantic_descriptor.dart';

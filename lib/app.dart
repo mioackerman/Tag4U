@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tag4u/presentation/pages/home_page.dart';
+import 'package:tag4u/presentation/pages/main_shell.dart';
 
 class Tag4UApp extends StatelessWidget {
   const Tag4UApp({super.key});
@@ -13,7 +13,7 @@ class Tag4UApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5B6FFF)),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const MainShell(),
     );
   }
 }

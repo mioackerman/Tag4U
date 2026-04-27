@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:tag4u/domain/entities/place_node.dart';
 import 'package:tag4u/domain/entities/semantic_descriptor.dart';
 import 'package:tag4u/domain/repositories/i_place_repository.dart';
+import 'package:tag4u/infrastructure/llm/anthropic_client.dart';
 
 /// Scored place for the pipeline.
 class ScoredPlace {
@@ -21,9 +22,13 @@ class ScoredPlace {
 /// so they can be wired to an actual model (OpenAI, Anthropic, on-device).
 class SoftConstraintEngine {
   final IPlaceRepository _placeRepo;
+  final AnthropicClient? _llm;
 
-  const SoftConstraintEngine({required IPlaceRepository placeRepo})
-      : _placeRepo = placeRepo;
+  const SoftConstraintEngine({
+    required IPlaceRepository placeRepo,
+    AnthropicClient? llmClient,
+  })  : _placeRepo = placeRepo,
+        _llm = llmClient;
 
   /// Scores each candidate place against the [preferenceVector].
   ///
@@ -88,23 +93,54 @@ class SoftConstraintEngine {
     return scores;
   }
 
-  /// Synthesises an itinerary narrative using LLM.
+  /// Synthesises an itinerary narrative via Claude.
   ///
-  /// TODO: Wire to Anthropic / OpenAI API.
+  /// Falls back to a structured stub when [_llm] is not configured.
   Future<String?> synthesiseItinerary({
     required List<PlaceNode> topPlaces,
     String? activityHint,
     required int memberCount,
   }) async {
-    // Stub: returns a structured placeholder until LLM is wired.
+    if (_llm == null) return _itineraryStub(topPlaces, activityHint, memberCount);
+
+    final placeDetails = topPlaces.map((p) {
+      final parts = <String>[p.name];
+      if (p.category != PlaceCategory.other) parts.add(p.category.name);
+      if (p.publicRating != null) parts.add('rating ${p.publicRating!.toStringAsFixed(1)}');
+      if (p.priceLevel != null) parts.add('\$' * p.priceLevel!);
+      if (p.address != null) parts.add(p.address!);
+      return parts.join(' | ');
+    }).join('\n');
+
+    final prompt = '''
+Group size: $memberCount people
+${activityHint != null ? 'Activity goal: $activityHint' : ''}
+
+Candidate venues (in ranked order):
+$placeDetails
+
+Please write a practical itinerary for this group.
+''';
+
+    try {
+      return await _llm.complete(userMessage: prompt);
+    } on AnthropicException catch (e) {
+      // Degrade gracefully — return stub so the app still functions.
+      return '${_itineraryStub(topPlaces, activityHint, memberCount)}\n\n> ⚠️ AI narrative unavailable (${e.statusCode}).';
+    }
+  }
+
+  String _itineraryStub(
+    List<PlaceNode> topPlaces,
+    String? activityHint,
+    int memberCount,
+  ) {
     final placeList = topPlaces.map((p) => '- ${p.name}').join('\n');
     return '''
 ## Suggested Itinerary
 *For $memberCount people${activityHint != null ? ' · $activityHint' : ''}*
 
 $placeList
-
-> Full LLM-generated narrative will appear here once the AI backend is configured.
 ''';
   }
 

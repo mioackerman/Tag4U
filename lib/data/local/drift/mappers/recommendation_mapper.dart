@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:drift/drift.dart';
 import 'package:tag4u/data/local/drift/app_database.dart';
 import 'package:tag4u/domain/entities/agent_task.dart';
 import 'package:tag4u/domain/entities/recommendation_plan.dart';

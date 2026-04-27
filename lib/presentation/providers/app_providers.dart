@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tag4u/data/local/drift/app_database.dart';
 import 'package:tag4u/data/repositories/graph_repository_impl.dart';
@@ -12,6 +13,7 @@ import 'package:tag4u/domain/usecases/get_recommendations_usecase.dart';
 import 'package:tag4u/domain/usecases/plan_group_activity_usecase.dart';
 import 'package:tag4u/domain/usecases/update_preference_usecase.dart';
 import 'package:tag4u/infrastructure/agents/group_planning_agent.dart';
+import 'package:tag4u/infrastructure/llm/anthropic_client.dart';
 import 'package:tag4u/infrastructure/reasoning/hard_constraint_engine.dart';
 import 'package:tag4u/infrastructure/reasoning/recommendation_pipeline.dart';
 import 'package:tag4u/infrastructure/reasoning/soft_constraint_engine.dart';
@@ -63,11 +65,23 @@ final recommendationRepositoryProvider = Provider<IRecommendationRepository>((re
 
 // ── Infrastructure ────────────────────────────────────────────────────────────
 
+/// Returns null when the key is missing — engine degrades gracefully.
+final anthropicClientProvider = Provider<AnthropicClient?>((ref) {
+  final key = dotenv.maybeGet('ANTHROPIC_API_KEY');
+  if (key == null || key.isEmpty || key == 'your-api-key-here') return null;
+  final client = AnthropicClient(apiKey: key);
+  ref.onDispose(client.dispose);
+  return client;
+});
+
 final hardConstraintEngineProvider =
     Provider((_) => const HardConstraintEngine());
 
 final softConstraintEngineProvider = Provider((ref) {
-  return SoftConstraintEngine(placeRepo: ref.watch(placeRepositoryProvider));
+  return SoftConstraintEngine(
+    placeRepo: ref.watch(placeRepositoryProvider),
+    llmClient: ref.watch(anthropicClientProvider),
+  );
 });
 
 final groupPlanningAgentProvider = Provider((ref) {

@@ -17,7 +17,8 @@ import 'package:uuid/uuid.dart';
 ///   3. rank     — hard-filter + soft-score candidates
 ///   4. run      — orchestrate all stages, return [RecommendationPlan]
 class GroupPlanningAgent extends BaseAgent {
-  static const String agentType = 'group_planning';
+  /// Use this constant when you need the type string at call sites.
+  static const String kAgentType = 'group_planning';
 
   final HardConstraintEngine _hardEngine;
   final SoftConstraintEngine _softEngine;
@@ -32,7 +33,7 @@ class GroupPlanningAgent extends BaseAgent {
         _uuid = uuid ?? const Uuid();
 
   @override
-  String get agentType => GroupPlanningAgent.agentType;
+  String get agentType => kAgentType;
 
   @override
   Future<void> analyze(AgentContext context) async {
@@ -110,7 +111,7 @@ class GroupPlanningAgent extends BaseAgent {
         );
       }
 
-      final plan = RecommendationPlan(
+      final outputPlan = RecommendationPlan(
         id: _uuid.v4(),
         agentTaskId: context.taskId,
         groupMemoryId: context.groupMemoryId,
@@ -123,7 +124,7 @@ class GroupPlanningAgent extends BaseAgent {
         createdAt: DateTime.now(),
       );
 
-      return Right(plan);
+      return Right(outputPlan);
     } catch (e) {
       return Left(AgentFailure(message: e.toString()));
     }

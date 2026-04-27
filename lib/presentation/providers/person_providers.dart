@@ -26,6 +26,12 @@ class PersonsNotifier extends AsyncNotifier<List<PersonNode>> {
   }
 }
 
+/// Derives a single person by id from the cached list. Null if not found.
+final personByIdProvider = Provider.family<PersonNode?, String>((ref, id) {
+  return ref.watch(personsProvider).valueOrNull
+      ?.firstWhere((p) => p.id == id, orElse: () => throw StateError(''));
+});
+
 // ── Tags for a specific person ────────────────────────────────────────────────
 
 final personTagsProvider = AsyncNotifierProviderFamily<PersonTagsNotifier,

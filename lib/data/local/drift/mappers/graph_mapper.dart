@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:drift/drift.dart';
 import 'package:tag4u/data/local/drift/app_database.dart';
 import 'package:tag4u/domain/entities/group_memory.dart';
 import 'package:tag4u/domain/entities/relationship_edge.dart';

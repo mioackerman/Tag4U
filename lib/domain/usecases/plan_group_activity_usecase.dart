@@ -7,6 +7,7 @@ import 'package:tag4u/domain/repositories/i_graph_repository.dart';
 import 'package:tag4u/domain/repositories/i_place_repository.dart';
 import 'package:tag4u/domain/repositories/i_recommendation_repository.dart';
 import 'package:tag4u/domain/usecases/base_usecase.dart';
+import 'package:tag4u/infrastructure/agents/base_agent.dart';
 import 'package:tag4u/infrastructure/agents/group_planning_agent.dart';
 
 class PlanGroupActivityParams {
@@ -92,7 +93,7 @@ class PlanGroupActivityUseCase
     final taskResult = await _recommendationRepo.createTask(
       AgentTask(
         id: context.taskId,
-        agentType: GroupPlanningAgent.agentType,
+        agentType: GroupPlanningAgent.kAgentType,
         contextJson: context.toJson(),
         createdAt: DateTime.now(),
       ),
