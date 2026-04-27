@@ -1,0 +1,15 @@
+{
+  "elements": {},
+  "imports": [
+    "package:dartz/dartz.dart",
+    "package:tag4u/core/errors/failures.dart",
+    "package:tag4u/core/utils/typedef.dart",
+    "package:tag4u/domain/entities/place_node.dart",
+    "package:tag4u/domain/entities/recommendation_plan.dart",
+    "package:tag4u/infrastructure/agents/base_agent.dart",
+    "package:tag4u/infrastructure/reasoning/hard_constraint_engine.dart",
+    "package:tag4u/infrastructure/reasoning/recommendation_pipeline.dart",
+    "package:tag4u/infrastructure/reasoning/soft_constraint_engine.dart",
+    "package:uuid/uuid.dart"
+  ]
+}

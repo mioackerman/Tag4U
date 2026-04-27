@@ -1,0 +1,23 @@
+{
+  "elements": {},
+  "imports": [
+    "package:flutter_riverpod/flutter_riverpod.dart",
+    "package:tag4u/data/local/drift/app_database.dart",
+    "package:tag4u/data/repositories/graph_repository_impl.dart",
+    "package:tag4u/data/repositories/person_repository_impl.dart",
+    "package:tag4u/data/repositories/place_repository_impl.dart",
+    "package:tag4u/data/repositories/recommendation_repository_impl.dart",
+    "package:tag4u/domain/repositories/i_graph_repository.dart",
+    "package:tag4u/domain/repositories/i_person_repository.dart",
+    "package:tag4u/domain/repositories/i_place_repository.dart",
+    "package:tag4u/domain/repositories/i_recommendation_repository.dart",
+    "package:tag4u/domain/usecases/get_recommendations_usecase.dart",
+    "package:tag4u/domain/usecases/plan_group_activity_usecase.dart",
+    "package:tag4u/domain/usecases/update_preference_usecase.dart",
+    "package:tag4u/infrastructure/agents/group_planning_agent.dart",
+    "package:tag4u/infrastructure/reasoning/hard_constraint_engine.dart",
+    "package:tag4u/infrastructure/reasoning/recommendation_pipeline.dart",
+    "package:tag4u/infrastructure/reasoning/soft_constraint_engine.dart",
+    "package:uuid/uuid.dart"
+  ]
+}

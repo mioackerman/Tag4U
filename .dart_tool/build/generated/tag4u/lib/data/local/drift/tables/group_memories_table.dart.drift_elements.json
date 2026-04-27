@@ -1,0 +1,1 @@
+{"valid_import":true,"imports":[{"uri":"package:drift/drift.dart","transitive":false}],"elements":[{"kind":"table","name":"group_memories","dart_name":"GroupMemoriesTable"},{"kind":"table","name":"group_members","dart_name":"GroupMembersTable"}]}

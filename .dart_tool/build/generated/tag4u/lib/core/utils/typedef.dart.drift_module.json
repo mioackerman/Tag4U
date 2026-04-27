@@ -1,0 +1,7 @@
+{
+  "elements": {},
+  "imports": [
+    "package:dartz/dartz.dart",
+    "package:tag4u/core/errors/failures.dart"
+  ]
+}

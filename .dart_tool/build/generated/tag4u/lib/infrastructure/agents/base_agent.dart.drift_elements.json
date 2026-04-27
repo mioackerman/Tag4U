@@ -1,0 +1,1 @@
+{"valid_import":true,"imports":[{"uri":"package:tag4u/core/utils/typedef.dart","transitive":false},{"uri":"package:tag4u/domain/entities/place_node.dart","transitive":false},{"uri":"package:tag4u/domain/entities/recommendation_plan.dart","transitive":false},{"uri":"package:uuid/uuid.dart","transitive":false}],"elements":[]}

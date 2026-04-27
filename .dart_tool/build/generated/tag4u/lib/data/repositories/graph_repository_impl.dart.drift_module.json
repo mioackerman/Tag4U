@@ -1,0 +1,16 @@
+{
+  "elements": {},
+  "imports": [
+    "package:dartz/dartz.dart",
+    "package:tag4u/core/errors/failures.dart",
+    "package:tag4u/core/utils/typedef.dart",
+    "package:tag4u/data/local/drift/daos/graph_dao.dart",
+    "package:tag4u/data/local/drift/daos/person_dao.dart",
+    "package:tag4u/data/local/drift/mappers/graph_mapper.dart",
+    "package:tag4u/data/local/drift/mappers/person_mapper.dart",
+    "package:tag4u/domain/entities/group_memory.dart",
+    "package:tag4u/domain/entities/preference_tag.dart",
+    "package:tag4u/domain/entities/relationship_edge.dart",
+    "package:tag4u/domain/repositories/i_graph_repository.dart"
+  ]
+}

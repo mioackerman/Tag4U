@@ -1,0 +1,1 @@
+{"valid_import":true,"imports":[{"uri":"package:drift/drift.dart","transitive":false},{"uri":"package:tag4u/data/local/drift/tables/places_table.dart","transitive":false}],"elements":[{"kind":"table","name":"semantic_descriptors","dart_name":"SemanticDescriptorsTable"}]}

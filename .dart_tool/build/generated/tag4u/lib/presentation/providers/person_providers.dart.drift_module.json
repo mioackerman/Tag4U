@@ -1,0 +1,9 @@
+{
+  "elements": {},
+  "imports": [
+    "package:flutter_riverpod/flutter_riverpod.dart",
+    "package:tag4u/domain/entities/person_node.dart",
+    "package:tag4u/domain/entities/preference_tag.dart",
+    "package:tag4u/presentation/providers/app_providers.dart"
+  ]
+}

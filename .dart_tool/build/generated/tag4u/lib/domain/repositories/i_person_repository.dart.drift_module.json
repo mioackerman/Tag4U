@@ -1,0 +1,8 @@
+{
+  "elements": {},
+  "imports": [
+    "package:tag4u/core/utils/typedef.dart",
+    "package:tag4u/domain/entities/person_node.dart",
+    "package:tag4u/domain/entities/preference_tag.dart"
+  ]
+}

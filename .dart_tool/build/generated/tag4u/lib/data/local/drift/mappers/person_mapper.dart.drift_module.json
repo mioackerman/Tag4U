@@ -1,0 +1,9 @@
+{
+  "elements": {},
+  "imports": [
+    "package:tag4u/data/local/drift/app_database.dart",
+    "package:tag4u/data/local/drift/tables/persons_table.dart",
+    "package:tag4u/domain/entities/person_node.dart",
+    "package:tag4u/domain/entities/preference_tag.dart"
+  ]
+}

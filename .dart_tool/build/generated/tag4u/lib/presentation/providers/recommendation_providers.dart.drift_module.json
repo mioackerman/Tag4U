@@ -1,0 +1,10 @@
+{
+  "elements": {},
+  "imports": [
+    "package:flutter_riverpod/flutter_riverpod.dart",
+    "package:tag4u/domain/entities/recommendation_plan.dart",
+    "package:tag4u/domain/usecases/get_recommendations_usecase.dart",
+    "package:tag4u/domain/usecases/plan_group_activity_usecase.dart",
+    "package:tag4u/presentation/providers/app_providers.dart"
+  ]
+}

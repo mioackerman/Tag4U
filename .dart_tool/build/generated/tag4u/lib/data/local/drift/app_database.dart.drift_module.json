@@ -1,0 +1,132 @@
+{
+  "elements": {
+    "AppDatabase": {
+      "id": {
+        "library_uri": "package:tag4u/data/local/drift/app_database.dart",
+        "name": "AppDatabase"
+      },
+      "declaration": {
+        "source_uri": "package:tag4u/data/local/drift/app_database.dart",
+        "offset": 1357,
+        "name": "AppDatabase"
+      },
+      "references": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/persons_table.dart",
+          "name": "persons"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/places_table.dart",
+          "name": "places"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/preference_tags_table.dart",
+          "name": "preference_tags"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/semantic_descriptors_table.dart",
+          "name": "semantic_descriptors"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+          "name": "relationship_edges"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/group_memories_table.dart",
+          "name": "group_memories"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/group_memories_table.dart",
+          "name": "group_members"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/agent_tasks_table.dart",
+          "name": "agent_tasks"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+          "name": "recommendation_plans"
+        }
+      ],
+      "type": "database",
+      "tables": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/persons_table.dart",
+          "name": "persons"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/places_table.dart",
+          "name": "places"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/preference_tags_table.dart",
+          "name": "preference_tags"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/semantic_descriptors_table.dart",
+          "name": "semantic_descriptors"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+          "name": "relationship_edges"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/group_memories_table.dart",
+          "name": "group_memories"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/group_memories_table.dart",
+          "name": "group_members"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/agent_tasks_table.dart",
+          "name": "agent_tasks"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+          "name": "recommendation_plans"
+        }
+      ],
+      "views": [],
+      "includes": [],
+      "queries": [],
+      "schema_version": 1,
+      "daos": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/daos/person_dao.dart",
+          "name": "PersonDao"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/daos/place_dao.dart",
+          "name": "PlaceDao"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/daos/graph_dao.dart",
+          "name": "GraphDao"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/daos/recommendation_dao.dart",
+          "name": "RecommendationDao"
+        }
+      ],
+      "has_constructor_arg": false
+    }
+  },
+  "imports": [
+    "package:drift/drift.dart",
+    "package:drift_flutter/drift_flutter.dart",
+    "package:tag4u/core/constants/app_constants.dart",
+    "package:tag4u/data/local/drift/daos/graph_dao.dart",
+    "package:tag4u/data/local/drift/daos/person_dao.dart",
+    "package:tag4u/data/local/drift/daos/place_dao.dart",
+    "package:tag4u/data/local/drift/daos/recommendation_dao.dart",
+    "package:tag4u/data/local/drift/tables/agent_tasks_table.dart",
+    "package:tag4u/data/local/drift/tables/group_memories_table.dart",
+    "package:tag4u/data/local/drift/tables/persons_table.dart",
+    "package:tag4u/data/local/drift/tables/places_table.dart",
+    "package:tag4u/data/local/drift/tables/preference_tags_table.dart",
+    "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+    "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+    "package:tag4u/data/local/drift/tables/semantic_descriptors_table.dart"
+  ]
+}

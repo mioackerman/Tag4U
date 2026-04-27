@@ -1,0 +1,9 @@
+{
+  "elements": {},
+  "imports": [
+    "package:tag4u/core/utils/typedef.dart",
+    "package:tag4u/domain/entities/recommendation_plan.dart",
+    "package:tag4u/domain/repositories/i_recommendation_repository.dart",
+    "package:tag4u/domain/usecases/base_usecase.dart"
+  ]
+}

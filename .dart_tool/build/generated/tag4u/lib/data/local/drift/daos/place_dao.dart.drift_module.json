@@ -1,0 +1,61 @@
+{
+  "elements": {
+    "PlaceDao": {
+      "id": {
+        "library_uri": "package:tag4u/data/local/drift/daos/place_dao.dart",
+        "name": "PlaceDao"
+      },
+      "declaration": {
+        "source_uri": "package:tag4u/data/local/drift/daos/place_dao.dart",
+        "offset": 337,
+        "name": "PlaceDao"
+      },
+      "references": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/places_table.dart",
+          "name": "places"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/semantic_descriptors_table.dart",
+          "name": "semantic_descriptors"
+        }
+      ],
+      "type": "dao",
+      "tables": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/places_table.dart",
+          "name": "places"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/semantic_descriptors_table.dart",
+          "name": "semantic_descriptors"
+        }
+      ],
+      "views": [],
+      "includes": [],
+      "queries": [],
+      "dart_type": {
+        "elements": [
+          {
+            "lexeme": "PlaceDao",
+            "import_uri": "package:tag4u/data/local/drift/daos/place_dao.dart"
+          }
+        ]
+      },
+      "database": {
+        "elements": [
+          {
+            "lexeme": "AppDatabase",
+            "import_uri": "package:tag4u/data/local/drift/app_database.dart"
+          }
+        ]
+      }
+    }
+  },
+  "imports": [
+    "package:drift/drift.dart",
+    "package:tag4u/data/local/drift/app_database.dart",
+    "package:tag4u/data/local/drift/tables/places_table.dart",
+    "package:tag4u/data/local/drift/tables/semantic_descriptors_table.dart"
+  ]
+}

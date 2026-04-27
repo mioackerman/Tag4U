@@ -1,0 +1,6 @@
+{
+  "elements": {},
+  "imports": [
+    "package:tag4u/domain/entities/place_node.dart"
+  ]
+}

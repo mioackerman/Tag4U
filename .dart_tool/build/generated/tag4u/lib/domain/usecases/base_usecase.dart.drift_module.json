@@ -1,0 +1,6 @@
+{
+  "elements": {},
+  "imports": [
+    "package:tag4u/core/utils/typedef.dart"
+  ]
+}

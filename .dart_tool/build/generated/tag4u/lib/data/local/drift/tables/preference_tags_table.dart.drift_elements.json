@@ -1,0 +1,1 @@
+{"valid_import":true,"imports":[{"uri":"package:drift/drift.dart","transitive":false},{"uri":"package:tag4u/data/local/drift/tables/persons_table.dart","transitive":false}],"elements":[{"kind":"table","name":"preference_tags","dart_name":"PreferenceTagsTable"}]}

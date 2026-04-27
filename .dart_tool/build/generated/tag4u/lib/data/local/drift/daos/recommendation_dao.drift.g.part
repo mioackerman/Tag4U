@@ -1,0 +1,6 @@
+// ignore_for_file: type=lint
+mixin _$RecommendationDaoMixin on DatabaseAccessor<AppDatabase> {
+  $AgentTasksTableTable get agentTasksTable => attachedDatabase.agentTasksTable;
+  $RecommendationPlansTableTable get recommendationPlansTable =>
+      attachedDatabase.recommendationPlansTable;
+}

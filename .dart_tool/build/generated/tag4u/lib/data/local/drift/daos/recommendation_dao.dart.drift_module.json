@@ -1,0 +1,61 @@
+{
+  "elements": {
+    "RecommendationDao": {
+      "id": {
+        "library_uri": "package:tag4u/data/local/drift/daos/recommendation_dao.dart",
+        "name": "RecommendationDao"
+      },
+      "declaration": {
+        "source_uri": "package:tag4u/data/local/drift/daos/recommendation_dao.dart",
+        "offset": 355,
+        "name": "RecommendationDao"
+      },
+      "references": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/agent_tasks_table.dart",
+          "name": "agent_tasks"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+          "name": "recommendation_plans"
+        }
+      ],
+      "type": "dao",
+      "tables": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/agent_tasks_table.dart",
+          "name": "agent_tasks"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+          "name": "recommendation_plans"
+        }
+      ],
+      "views": [],
+      "includes": [],
+      "queries": [],
+      "dart_type": {
+        "elements": [
+          {
+            "lexeme": "RecommendationDao",
+            "import_uri": "package:tag4u/data/local/drift/daos/recommendation_dao.dart"
+          }
+        ]
+      },
+      "database": {
+        "elements": [
+          {
+            "lexeme": "AppDatabase",
+            "import_uri": "package:tag4u/data/local/drift/app_database.dart"
+          }
+        ]
+      }
+    }
+  },
+  "imports": [
+    "package:drift/drift.dart",
+    "package:tag4u/data/local/drift/app_database.dart",
+    "package:tag4u/data/local/drift/tables/agent_tasks_table.dart",
+    "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "elements": {},
+  "imports": [
+    "package:tag4u/data/local/drift/app_database.dart",
+    "package:tag4u/domain/entities/agent_task.dart",
+    "package:tag4u/domain/entities/recommendation_plan.dart"
+  ]
+}

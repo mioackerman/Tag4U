@@ -1,0 +1,239 @@
+{
+  "elements": {
+    "recommendation_plans": {
+      "id": {
+        "library_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+        "name": "recommendation_plans"
+      },
+      "declaration": {
+        "source_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+        "offset": 155,
+        "name": "RecommendationPlansTable"
+      },
+      "references": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/agent_tasks_table.dart",
+          "name": "agent_tasks"
+        }
+      ],
+      "type": "table",
+      "columns": [
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "id",
+          "nameInDart": "id",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+            "offset": 276,
+            "name": "id"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "agent_task_id",
+          "nameInDart": "agentTaskId",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+            "offset": 309,
+            "name": "agentTaskId"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [
+            {
+              "type": "foreign_key",
+              "column": {
+                "table": {
+                  "library_uri": "package:tag4u/data/local/drift/tables/agent_tasks_table.dart",
+                  "name": "agent_tasks"
+                },
+                "name": "id"
+              },
+              "onUpdate": null,
+              "onDelete": "cascade",
+              "initiallyDeferred": false
+            }
+          ],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": true,
+          "nameInSql": "group_memory_id",
+          "nameInDart": "groupMemoryId",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+            "offset": 419,
+            "name": "groupMemoryId"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "title",
+          "nameInDart": "title",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+            "offset": 474,
+            "name": "title"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "items_json",
+          "nameInDart": "itemsJson",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+            "offset": 556,
+            "name": "itemsJson"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": {
+            "elements": [
+              "const ",
+              {
+                "lexeme": "Constant",
+                "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+              },
+              "('[]')"
+            ]
+          },
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": "/// JSON-encoded List<RecommendationItem>.",
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": true,
+          "nameInSql": "itinerary_narrative",
+          "nameInDart": "itineraryNarrative",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+            "offset": 631,
+            "name": "itineraryNarrative"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "double"
+          },
+          "nullable": true,
+          "nameInSql": "overall_score",
+          "nameInDart": "overallScore",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+            "offset": 691,
+            "name": "overallScore"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "dateTime"
+          },
+          "nullable": false,
+          "nameInSql": "created_at",
+          "nameInDart": "createdAt",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/recommendation_plans_table.dart",
+            "offset": 749,
+            "name": "createdAt"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        }
+      ],
+      "existing_data_class": null,
+      "table_constraints": [
+        {
+          "type": "primary_key",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "custom_parent_class": null,
+      "interfaces_for_row_class": [],
+      "fixed_entity_info_name": null,
+      "base_dart_name": "RecommendationPlansTable",
+      "row_class_name": "RecommendationPlansTableData",
+      "companion_class_name": null,
+      "without_rowid": false,
+      "strict": false,
+      "write_default_constraints": true,
+      "custom_constraints": [],
+      "attached_indices": []
+    }
+  },
+  "imports": [
+    "package:drift/drift.dart",
+    "package:tag4u/data/local/drift/tables/agent_tasks_table.dart"
+  ]
+}

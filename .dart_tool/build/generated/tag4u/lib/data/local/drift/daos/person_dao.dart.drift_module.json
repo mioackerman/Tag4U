@@ -1,0 +1,61 @@
+{
+  "elements": {
+    "PersonDao": {
+      "id": {
+        "library_uri": "package:tag4u/data/local/drift/daos/person_dao.dart",
+        "name": "PersonDao"
+      },
+      "declaration": {
+        "source_uri": "package:tag4u/data/local/drift/daos/person_dao.dart",
+        "offset": 330,
+        "name": "PersonDao"
+      },
+      "references": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/persons_table.dart",
+          "name": "persons"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/preference_tags_table.dart",
+          "name": "preference_tags"
+        }
+      ],
+      "type": "dao",
+      "tables": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/persons_table.dart",
+          "name": "persons"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/preference_tags_table.dart",
+          "name": "preference_tags"
+        }
+      ],
+      "views": [],
+      "includes": [],
+      "queries": [],
+      "dart_type": {
+        "elements": [
+          {
+            "lexeme": "PersonDao",
+            "import_uri": "package:tag4u/data/local/drift/daos/person_dao.dart"
+          }
+        ]
+      },
+      "database": {
+        "elements": [
+          {
+            "lexeme": "AppDatabase",
+            "import_uri": "package:tag4u/data/local/drift/app_database.dart"
+          }
+        ]
+      }
+    }
+  },
+  "imports": [
+    "package:drift/drift.dart",
+    "package:tag4u/data/local/drift/app_database.dart",
+    "package:tag4u/data/local/drift/tables/persons_table.dart",
+    "package:tag4u/data/local/drift/tables/preference_tags_table.dart"
+  ]
+}

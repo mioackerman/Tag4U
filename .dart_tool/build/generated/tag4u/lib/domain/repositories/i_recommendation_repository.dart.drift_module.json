@@ -1,0 +1,8 @@
+{
+  "elements": {},
+  "imports": [
+    "package:tag4u/core/utils/typedef.dart",
+    "package:tag4u/domain/entities/agent_task.dart",
+    "package:tag4u/domain/entities/recommendation_plan.dart"
+  ]
+}

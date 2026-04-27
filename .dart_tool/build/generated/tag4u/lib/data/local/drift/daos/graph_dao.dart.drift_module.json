@@ -1,0 +1,69 @@
+{
+  "elements": {
+    "GraphDao": {
+      "id": {
+        "library_uri": "package:tag4u/data/local/drift/daos/graph_dao.dart",
+        "name": "GraphDao"
+      },
+      "declaration": {
+        "source_uri": "package:tag4u/data/local/drift/daos/graph_dao.dart",
+        "offset": 367,
+        "name": "GraphDao"
+      },
+      "references": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+          "name": "relationship_edges"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/group_memories_table.dart",
+          "name": "group_memories"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/group_memories_table.dart",
+          "name": "group_members"
+        }
+      ],
+      "type": "dao",
+      "tables": [
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+          "name": "relationship_edges"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/group_memories_table.dart",
+          "name": "group_memories"
+        },
+        {
+          "library_uri": "package:tag4u/data/local/drift/tables/group_memories_table.dart",
+          "name": "group_members"
+        }
+      ],
+      "views": [],
+      "includes": [],
+      "queries": [],
+      "dart_type": {
+        "elements": [
+          {
+            "lexeme": "GraphDao",
+            "import_uri": "package:tag4u/data/local/drift/daos/graph_dao.dart"
+          }
+        ]
+      },
+      "database": {
+        "elements": [
+          {
+            "lexeme": "AppDatabase",
+            "import_uri": "package:tag4u/data/local/drift/app_database.dart"
+          }
+        ]
+      }
+    }
+  },
+  "imports": [
+    "package:drift/drift.dart",
+    "package:tag4u/data/local/drift/app_database.dart",
+    "package:tag4u/data/local/drift/tables/group_memories_table.dart",
+    "package:tag4u/data/local/drift/tables/relationship_edges_table.dart"
+  ]
+}

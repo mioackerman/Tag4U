@@ -1,0 +1,261 @@
+{
+  "elements": {
+    "relationship_edges": {
+      "id": {
+        "library_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+        "name": "relationship_edges"
+      },
+      "declaration": {
+        "source_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+        "offset": 117,
+        "name": "RelationshipEdgesTable"
+      },
+      "references": [],
+      "type": "table",
+      "columns": [
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "id",
+          "nameInDart": "id",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+            "offset": 234,
+            "name": "id"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "from_node_id",
+          "nameInDart": "fromNodeId",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+            "offset": 267,
+            "name": "fromNodeId"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "from_node_type",
+          "nameInDart": "fromNodeType",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+            "offset": 347,
+            "name": "fromNodeType"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": "/// String name of [NodeType] enum.",
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "to_node_id",
+          "nameInDart": "toNodeId",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+            "offset": 391,
+            "name": "toNodeId"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "to_node_type",
+          "nameInDart": "toNodeType",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+            "offset": 430,
+            "name": "toNodeType"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": false,
+          "nameInSql": "label",
+          "nameInDart": "label",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+            "offset": 471,
+            "name": "label"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "double"
+          },
+          "nullable": false,
+          "nameInSql": "weight",
+          "nameInDart": "weight",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+            "offset": 507,
+            "name": "weight"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": {
+            "elements": [
+              "const ",
+              {
+                "lexeme": "Constant",
+                "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+              },
+              "(0.5)"
+            ]
+          },
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "string"
+          },
+          "nullable": true,
+          "nameInSql": "metadata_json",
+          "nameInDart": "metadataJson",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+            "offset": 577,
+            "name": "metadataJson"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "dateTime"
+          },
+          "nullable": false,
+          "nameInSql": "created_at",
+          "nameInDart": "createdAt",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+            "offset": 635,
+            "name": "createdAt"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "dateTime"
+          },
+          "nullable": false,
+          "nameInSql": "updated_at",
+          "nameInDart": "updatedAt",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/relationship_edges_table.dart",
+            "offset": 683,
+            "name": "updatedAt"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": null,
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": null,
+          "constraints": [],
+          "customConstraints": null
+        }
+      ],
+      "existing_data_class": null,
+      "table_constraints": [
+        {
+          "type": "primary_key",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "custom_parent_class": null,
+      "interfaces_for_row_class": [],
+      "fixed_entity_info_name": null,
+      "base_dart_name": "RelationshipEdgesTable",
+      "row_class_name": "RelationshipEdgesTableData",
+      "companion_class_name": null,
+      "without_rowid": false,
+      "strict": false,
+      "write_default_constraints": true,
+      "custom_constraints": [],
+      "attached_indices": []
+    }
+  },
+  "imports": [
+    "package:drift/drift.dart"
+  ]
+}

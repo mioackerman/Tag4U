@@ -1,0 +1,1 @@
+{"valid_import":true,"imports":[{"uri":"package:tag4u/core/utils/typedef.dart","transitive":false},{"uri":"package:tag4u/domain/entities/recommendation_plan.dart","transitive":false},{"uri":"package:tag4u/domain/usecases/plan_group_activity_usecase.dart","transitive":false}],"elements":[]}

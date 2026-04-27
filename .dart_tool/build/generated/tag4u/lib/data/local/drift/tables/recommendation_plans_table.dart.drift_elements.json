@@ -1,0 +1,1 @@
+{"valid_import":true,"imports":[{"uri":"package:drift/drift.dart","transitive":false},{"uri":"package:tag4u/data/local/drift/tables/agent_tasks_table.dart","transitive":false}],"elements":[{"kind":"table","name":"recommendation_plans","dart_name":"RecommendationPlansTable"}]}

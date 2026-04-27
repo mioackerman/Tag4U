@@ -1,0 +1,13 @@
+{
+  "elements": {},
+  "imports": [
+    "package:dartz/dartz.dart",
+    "package:tag4u/core/errors/failures.dart",
+    "package:tag4u/core/utils/typedef.dart",
+    "package:tag4u/data/local/drift/daos/recommendation_dao.dart",
+    "package:tag4u/data/local/drift/mappers/recommendation_mapper.dart",
+    "package:tag4u/domain/entities/agent_task.dart",
+    "package:tag4u/domain/entities/recommendation_plan.dart",
+    "package:tag4u/domain/repositories/i_recommendation_repository.dart"
+  ]
+}
