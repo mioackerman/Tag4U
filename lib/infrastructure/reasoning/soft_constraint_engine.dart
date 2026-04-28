@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:tag4u/core/constants/app_constants.dart';
 import 'package:tag4u/domain/entities/place_node.dart';
 import 'package:tag4u/domain/entities/semantic_descriptor.dart';
 import 'package:tag4u/domain/repositories/i_place_repository.dart';
@@ -155,6 +156,11 @@ $placeList
     if (place.personalScore != null) {
       // Personal memory: -1 to 1 → add 0 to 0.3
       score += (place.personalScore! + 1.0) / 2.0 * 0.3;
+    }
+    // Boost user-created (personal-layer) places over imported/public ones.
+    // Constant: AppConstants.personalPlaceWeightBonus (default 0.15)
+    if (place.layer == PlaceLayer.personal) {
+      score += AppConstants.personalPlaceWeightBonus;
     }
     return score.clamp(0.0, 1.0);
   }

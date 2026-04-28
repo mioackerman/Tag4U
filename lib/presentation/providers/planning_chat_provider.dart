@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tag4u/domain/entities/chat_message.dart';
 import 'package:tag4u/domain/entities/person_node.dart';
+import 'package:tag4u/domain/entities/place_node.dart';
 import 'package:tag4u/domain/entities/preference_tag.dart';
 import 'package:tag4u/presentation/providers/app_providers.dart';
+import 'package:tag4u/presentation/providers/person_providers.dart';
 import 'package:uuid/uuid.dart';
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -11,24 +13,36 @@ class PlanningChatState {
   final List<ChatMessage> messages;
   final bool isLoading;
 
-  /// True while the party-input bottom sheet should be open.
+  /// True while the member-selection sheet should be open.
   final bool partySheetOpen;
+
+  /// Members selected during the planning setup flow.
+  final List<PersonNode> selectedMembers;
+
+  /// Places selected during the planning setup flow.
+  final List<PlaceNode> selectedPlaces;
 
   const PlanningChatState({
     required this.messages,
     this.isLoading = false,
     this.partySheetOpen = false,
+    this.selectedMembers = const [],
+    this.selectedPlaces = const [],
   });
 
   PlanningChatState copyWith({
     List<ChatMessage>? messages,
     bool? isLoading,
     bool? partySheetOpen,
+    List<PersonNode>? selectedMembers,
+    List<PlaceNode>? selectedPlaces,
   }) {
     return PlanningChatState(
       messages: messages ?? this.messages,
       isLoading: isLoading ?? this.isLoading,
       partySheetOpen: partySheetOpen ?? this.partySheetOpen,
+      selectedMembers: selectedMembers ?? this.selectedMembers,
+      selectedPlaces: selectedPlaces ?? this.selectedPlaces,
     );
   }
 }
@@ -59,10 +73,9 @@ class PlanningChatNotifier extends Notifier<PlanningChatState> {
 
   // ── Skill triggers ──────────────────────────────────────────────────────────
 
-  /// Called when user taps "派对推荐" skill button.
+  /// Called when user taps the "派对推荐" skill button.
   void onPartySkillTap() {
-    // Replace the skill-choices bubble with a plain confirmation
-    _replaceSkillChoices('好的，来规划一场聚会！🎉\n请选择参与人员并描述活动内容。');
+    _replaceSkillChoices('好的，来规划一场聚会！🎉\n请选择参与人员。');
     state = state.copyWith(partySheetOpen: true);
   }
 
@@ -70,75 +83,25 @@ class PlanningChatNotifier extends Notifier<PlanningChatState> {
     state = state.copyWith(partySheetOpen: false);
   }
 
-  // ── Party planning submission ───────────────────────────────────────────────
+  // ── Selection ───────────────────────────────────────────────────────────────
 
-  /// Called when user confirms the party-input sheet.
-  ///
-  /// [members]     — selected [PersonNode]s.
-  /// [tagsByPerson] — preferenceTags grouped by personNodeId.
-  /// [description] — free-text activity description.
-  Future<void> submitPartyPlanning({
+  /// Called after the member → place selection flow completes.
+  void setMembersAndPlaces({
     required List<PersonNode> members,
-    required Map<String, List<PreferenceTag>> tagsByPerson,
-    required String description,
-  }) async {
-    state = state.copyWith(partySheetOpen: false);
+    required List<PlaceNode> places,
+  }) {
+    state = state.copyWith(
+      selectedMembers: members,
+      selectedPlaces: places,
+      partySheetOpen: false,
+    );
+  }
 
-    // Build a short display label for the user bubble
-    final nameList = members.map((m) => m.name).join('、');
-    final displayText = members.isEmpty
-        ? description
-        : '$nameList 参与\n$description';
-
-    // Build the full prompt with preference context for Claude
-    final prefLines = members.map((m) {
-      final tags = tagsByPerson[m.id] ?? [];
-      final tagText = tags.isEmpty
-          ? '无特别偏好'
-          : tags.map((t) {
-              final prefix = switch (t.sentiment) {
-                TagSentiment.positive => '喜欢',
-                TagSentiment.negative => '不喜欢',
-                TagSentiment.neutral => '',
-              };
-              return '$prefix${t.label}';
-            }).join('，');
-      return '${m.name}（${m.gender ?? ''}${m.mbti != null ? ' · ${m.mbti}' : ''}）：$tagText';
-    }).join('\n');
-
-    final fullPrompt = '''
-帮我规划一场聚会活动。
-
-参与人员及偏好：
-$prefLines
-
-活动需求：$description
-
-请根据大家的偏好推荐 5-8 个适合的场所或活动类型，给出简短理由。
-''';
-
-    _addMessage(ChatMessage(
-      id: _uuid.v4(),
-      role: MessageRole.user,
-      text: displayText,
-      prompt: fullPrompt,
-      createdAt: DateTime.now(),
-    ));
-
-    final loadingId = _addLoading();
-
-    try {
-      final client = ref.read(anthropicClientProvider);
-      if (client == null) {
-        _resolveLoading(
-            loadingId, '⚠️ 请先在 .env 文件中填写 ANTHROPIC_API_KEY。');
-        return;
-      }
-      final response = await client.chat(messages: _apiHistory());
-      _resolveLoading(loadingId, response);
-    } on Exception catch (e) {
-      _resolveLoading(loadingId, '出错了：$e');
-    }
+  void clearSelection() {
+    state = state.copyWith(
+      selectedMembers: [],
+      selectedPlaces: [],
+    );
   }
 
   // ── Free-form user message ──────────────────────────────────────────────────
@@ -147,10 +110,19 @@ $prefLines
     final trimmed = text.trim();
     if (trimmed.isEmpty) return;
 
+    // Inject member/place context on the first user message after selection.
+    final isFirstUserMsg =
+        !state.messages.any((m) => m.role == MessageRole.user);
+    final promptContent =
+        (state.selectedMembers.isNotEmpty && isFirstUserMsg)
+            ? _buildContextPrompt(trimmed)
+            : trimmed;
+
     _addMessage(ChatMessage(
       id: _uuid.v4(),
       role: MessageRole.user,
-      text: trimmed,
+      text: trimmed,      // shown in the chat bubble
+      prompt: promptContent, // sent to the API (may include context)
       createdAt: DateTime.now(),
     ));
 
@@ -172,6 +144,44 @@ $prefLines
 
   // ── Private helpers ─────────────────────────────────────────────────────────
 
+  /// Builds a rich prompt that includes member preferences and selected places.
+  String _buildContextPrompt(String userText) {
+    final members = state.selectedMembers;
+    final places = state.selectedPlaces;
+
+    final memberLines = members.map((m) {
+      final tags = ref.read(personTagsProvider(m.id)).valueOrNull ?? [];
+      final tagText = tags.isEmpty
+          ? '无特别偏好'
+          : tags.map((t) {
+              final prefix = switch (t.sentiment) {
+                TagSentiment.positive => '喜欢',
+                TagSentiment.negative => '不喜欢',
+                TagSentiment.neutral => '',
+              };
+              return '$prefix${t.label}';
+            }).join('，');
+      return '${m.name}${m.mbti != null ? '（${m.mbti}）' : ''}：$tagText';
+    }).join('\n');
+
+    final placeLines = places.isEmpty
+        ? '无指定地点'
+        : places
+            .map((p) =>
+                '- ${p.name}${p.address != null ? '（${p.address}）' : ''}')
+            .join('\n');
+
+    return '''
+参与人员（${members.length}人）及偏好：
+$memberLines
+
+指定地点：
+$placeLines
+
+用户需求：$userText
+''';
+  }
+
   void _addMessage(ChatMessage msg) {
     state = state.copyWith(messages: [...state.messages, msg]);
   }
@@ -192,7 +202,8 @@ $prefLines
   void _resolveLoading(String id, String text) {
     state = state.copyWith(
       messages: state.messages
-          .map((m) => m.id == id ? m.copyWith(text: text, type: MessageType.text) : m)
+          .map((m) =>
+              m.id == id ? m.copyWith(text: text, type: MessageType.text) : m)
           .toList(),
       isLoading: false,
     );
@@ -208,7 +219,8 @@ $prefLines
     );
   }
 
-  ChatMessage _assistantMsg(String text, {MessageType type = MessageType.text}) {
+  ChatMessage _assistantMsg(String text,
+      {MessageType type = MessageType.text}) {
     return ChatMessage(
       id: _uuid.v4(),
       role: MessageRole.assistant,
@@ -218,7 +230,6 @@ $prefLines
     );
   }
 
-  /// Builds the API message history (excludes loading bubbles).
   List<Map<String, String>> _apiHistory() {
     return state.messages
         .where((m) => !m.isLoading && m.text.isNotEmpty)

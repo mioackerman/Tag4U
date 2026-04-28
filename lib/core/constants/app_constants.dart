@@ -20,6 +20,15 @@ class AppConstants {
 
   // Recommendation pipeline
   static const double defaultHardDistanceKm = 30.0;
+
+  /// Extra scoring bonus applied to personal-layer places (user-created) vs.
+  /// public/imported places during soft constraint scoring.
+  ///
+  /// Variable location : lib/core/constants/app_constants.dart
+  ///                     → AppConstants.personalPlaceWeightBonus
+  /// Applied in        : lib/infrastructure/reasoning/soft_constraint_engine.dart
+  ///                     → SoftConstraintEngine._baseScore()
+  static const double personalPlaceWeightBonus = 0.15;
   static const double defaultEdgeWeightThreshold = 0.3;
   static const int maxCandidatePlaces = 50;
   static const int defaultRecommendationCount = 10;

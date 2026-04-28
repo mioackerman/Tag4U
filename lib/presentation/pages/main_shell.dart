@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tag4u/presentation/pages/persons_page.dart';
 import 'package:tag4u/presentation/pages/planning_page.dart';
+import 'package:tag4u/presentation/pages/tag_page.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -13,7 +13,7 @@ class _MainShellState extends State<MainShell> {
   int _index = 0;
 
   static const _pages = <Widget>[
-    PersonsPage(),
+    TagPage(),
     PlanningPage(),
   ];
 
@@ -26,9 +26,9 @@ class _MainShellState extends State<MainShell> {
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.people_outline),
-            selectedIcon: Icon(Icons.people),
-            label: '人物',
+            icon: Icon(Icons.label_outline),
+            selectedIcon: Icon(Icons.label),
+            label: 'Tag',
           ),
           NavigationDestination(
             icon: Icon(Icons.explore_outlined),
