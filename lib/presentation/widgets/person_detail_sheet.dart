@@ -3,15 +3,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tag4u/domain/entities/person_node.dart';
 import 'package:tag4u/domain/entities/preference_tag.dart';
 import 'package:tag4u/presentation/providers/person_providers.dart';
+import 'package:tag4u/presentation/widgets/entity_detail_sheet.dart';
 import 'package:tag4u/presentation/widgets/person_card.dart';
 import 'package:uuid/uuid.dart';
 
-/// Reserved tag context for the "口味偏好" basic-info chip.
 const _tasteContext = 'taste';
 
+/// Detail bottom sheet for a [PersonNode].
+///
+/// Uses [EntityDetailSheet] as the layout shell and injects:
+///   - [EntityNameHeader]  — inline-editable name with avatar
+///   - [_PersonBasicInfoSection] — gender / taste / MBTI / vehicle chips
+///   - [DetailSection] for preference tags
+///   - [EntityAddTagSection] with a sentiment selector
 class PersonDetailSheet extends ConsumerStatefulWidget {
   final String personId;
-
   const PersonDetailSheet({super.key, required this.personId});
 
   @override
@@ -35,36 +41,70 @@ class _PersonDetailSheetState extends ConsumerState<PersonDetailSheet> {
 
     if (person == null) return const SizedBox.shrink();
 
-    return DraggableScrollableSheet(
-      initialChildSize: 0.78,
-      minChildSize: 0.5,
-      maxChildSize: 0.95,
-      expand: false,
-      builder: (_, scrollController) => Column(
-        children: [
-          _Handle(),
-          Expanded(
-            child: ListView(
-              controller: scrollController,
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 48),
-              children: [
-                _PersonHeader(person: person),
-                const SizedBox(height: 28),
-                _BasicInfoSection(person: person),
-                const Divider(height: 36),
-                _TagsSection(personId: widget.personId, tagsAsync: tagsAsync),
-                const Divider(height: 36),
-                _AddTagSection(
-                  controller: _tagController,
-                  sentiment: _sentiment,
-                  onSentimentChanged: (s) => setState(() => _sentiment = s),
-                  onSubmit: _submitTag,
-                ),
-              ],
-            ),
+    return EntityDetailSheet(
+      onDelete: () =>
+          ref.read(personsProvider.notifier).delete(widget.personId),
+      header: EntityNameHeader(
+        avatar: CircleAvatar(
+          radius: 24,
+          backgroundColor: avatarColor(person.name),
+          child: Text(
+            person.name.isNotEmpty ? person.name[0] : '?',
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold),
           ),
-        ],
+        ),
+        name: person.name,
+        onSave: (name) => ref.read(personsProvider.notifier).upsert(
+              person.copyWith(name: name, updatedAt: DateTime.now()),
+            ),
       ),
+      sections: [
+        _PersonBasicInfoSection(person: person),
+        DetailSection(
+          title: '偏好标签',
+          child: tagsAsync.when(
+            loading: () => const SizedBox(
+                height: 32,
+                child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 2))),
+            error: (e, _) =>
+                Text('$e', style: const TextStyle(color: Colors.red)),
+            data: (tags) {
+              final prefTags =
+                  tags.where((t) => t.context != _tasteContext).toList();
+              if (prefTags.isEmpty) {
+                return Text('还没有偏好标签',
+                    style: TextStyle(color: Colors.grey.shade400));
+              }
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: prefTags
+                    .map((tag) => _PersonTagChip(
+                          tag: tag,
+                          onDelete: () => ref
+                              .read(personTagsProvider(widget.personId)
+                                  .notifier)
+                              .removeTag(tag.id),
+                        ))
+                    .toList(),
+              );
+            },
+          ),
+        ),
+        EntityAddTagSection(
+          controller: _tagController,
+          hint: '例：不喜欢嘈杂的地方、爱吃日料',
+          onSubmit: _submitTag,
+          extra: _SentimentSelector(
+            value: _sentiment,
+            onChanged: (s) => setState(() => _sentiment = s),
+          ),
+        ),
+      ],
     );
   }
 
@@ -87,186 +127,84 @@ class _PersonDetailSheetState extends ConsumerState<PersonDetailSheet> {
   }
 }
 
-// ── Sub-widgets ───────────────────────────────────────────────────────────────
+// ── Person-specific sections ──────────────────────────────────────────────────
 
-class _Handle extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Container(
-        width: 40,
-        height: 4,
-        decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(2),
-        ),
-      ),
-    );
-  }
-}
-
-class _PersonHeader extends ConsumerWidget {
+/// Basic-info chips: gender, taste, MBTI, vehicle.
+class _PersonBasicInfoSection extends ConsumerWidget {
   final PersonNode person;
-  const _PersonHeader({required this.person});
+  const _PersonBasicInfoSection({required this.person});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final color = avatarColor(person.name);
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: color,
-          child: Text(
-            person.name.isNotEmpty ? person.name[0] : '?',
-            style: const TextStyle(
-                color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(width: 14),
-        GestureDetector(
-          onTap: () => _editName(context, ref),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                person.name,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 6),
-              Icon(Icons.edit_outlined,
-                  size: 16, color: Colors.grey.shade400),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+    final tags = ref.watch(personTagsProvider(person.id)).valueOrNull ?? [];
+    final tasteTag = tags.firstWhereOrNull((t) => t.context == _tasteContext);
 
-  void _editName(BuildContext context, WidgetRef ref) {
-    final controller = TextEditingController(text: person.name);
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('修改名字'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(hintText: '名字'),
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
-          TextButton(
-            onPressed: () {
-              final name = controller.text.trim();
-              Navigator.pop(ctx);
-              if (name.isEmpty || name == person.name) return;
-              ref.read(personsProvider.notifier).upsert(
-                    person.copyWith(name: name, updatedAt: DateTime.now()),
-                  );
-            },
-            child: const Text('保存'),
+    return DetailSection(
+      title: '基本信息',
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          DetailInfoChip(
+            icon: Icons.person_outline,
+            label: person.gender?.isNotEmpty == true
+                ? '性别：${person.gender}'
+                : '性别未填',
+            onTap: () => showEditTextDialog(
+              context,
+              title: '性别',
+              hint: '例：男 / 女 / 其他',
+              current: person.gender,
+              onSave: (v) => ref.read(personsProvider.notifier).upsert(
+                    person.copyWith(
+                        gender: v.isEmpty ? null : v,
+                        updatedAt: DateTime.now()),
+                  ),
+            ),
+          ),
+          DetailInfoChip(
+            icon: Icons.restaurant_outlined,
+            label: tasteTag != null ? '口味：${tasteTag.label}' : '口味未填',
+            onTap: () => _editTaste(context, ref, tasteTag),
+          ),
+          DetailInfoChip(
+            icon: Icons.psychology_outlined,
+            label: person.mbti?.isNotEmpty == true
+                ? 'MBTI：${person.mbti}'
+                : 'MBTI未填',
+            onTap: () => showEditTextDialog(
+              context,
+              title: 'MBTI',
+              hint: '例：INFP',
+              current: person.mbti,
+              onSave: (v) => ref.read(personsProvider.notifier).upsert(
+                    person.copyWith(
+                        mbti: v.isEmpty ? null : v,
+                        updatedAt: DateTime.now()),
+                  ),
+            ),
+          ),
+          DetailInfoChip(
+            icon: Icons.directions_car_outlined,
+            label: person.hasVehicle
+                ? '有车（${person.vehicleSeats ?? '?'}座）'
+                : '无车',
+            onTap: () => _editVehicle(context, ref),
           ),
         ],
       ),
     );
   }
-}
-
-class _BasicInfoSection extends ConsumerWidget {
-  final PersonNode person;
-  const _BasicInfoSection({required this.person});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final tagsAsync = ref.watch(personTagsProvider(person.id));
-    final tags = tagsAsync.valueOrNull ?? [];
-    final tasteTag = tags.firstWhereOrNull((t) => t.context == _tasteContext);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _sectionLabel(context, '基本信息'),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            // 性别
-            _InfoChip(
-              icon: Icons.person_outline,
-              label: person.gender?.isNotEmpty == true
-                  ? '性别：${person.gender}'
-                  : '性别未填',
-              onTap: () => _editTextField(
-                context,
-                title: '性别',
-                hint: '例：男 / 女 / 其他',
-                current: person.gender,
-                onSave: (v) => ref.read(personsProvider.notifier).upsert(
-                      person.copyWith(
-                          gender: v.isEmpty ? null : v,
-                          updatedAt: DateTime.now()),
-                    ),
-              ),
-            ),
-            // 口味偏好
-            _InfoChip(
-              icon: Icons.restaurant_outlined,
-              label: tasteTag != null ? '口味：${tasteTag.label}' : '口味未填',
-              onTap: () => _editTaste(context, ref, tasteTag),
-            ),
-            // MBTI
-            _InfoChip(
-              icon: Icons.psychology_outlined,
-              label: person.mbti?.isNotEmpty == true
-                  ? 'MBTI：${person.mbti}'
-                  : 'MBTI未填',
-              onTap: () => _editTextField(
-                context,
-                title: 'MBTI',
-                hint: '例：INFP',
-                current: person.mbti,
-                onSave: (v) => ref.read(personsProvider.notifier).upsert(
-                      person.copyWith(
-                          mbti: v.isEmpty ? null : v,
-                          updatedAt: DateTime.now()),
-                    ),
-              ),
-            ),
-            // 有车
-            _InfoChip(
-              icon: Icons.directions_car_outlined,
-              label: person.hasVehicle
-                  ? '有车（${person.vehicleSeats ?? '?'}座）'
-                  : '无车',
-              onTap: () => _editVehicle(context, ref, person),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
 
   void _editTaste(
-    BuildContext context,
-    WidgetRef ref,
-    PreferenceTag? existing,
-  ) {
-    final controller =
-        TextEditingController(text: existing?.label ?? '');
+      BuildContext context, WidgetRef ref, PreferenceTag? existing) {
+    final ctrl = TextEditingController(text: existing?.label ?? '');
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('口味偏好'),
         content: TextField(
-          controller: controller,
+          controller: ctrl,
           autofocus: true,
           decoration: const InputDecoration(hint: Text('例：不吃辣，喜欢清淡')),
         ),
@@ -275,7 +213,7 @@ class _BasicInfoSection extends ConsumerWidget {
               onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
           TextButton(
             onPressed: () {
-              final value = controller.text.trim();
+              final value = ctrl.text.trim();
               Navigator.pop(ctx);
               if (value.isEmpty) return;
               final now = DateTime.now();
@@ -305,11 +243,10 @@ class _BasicInfoSection extends ConsumerWidget {
     );
   }
 
-  void _editVehicle(BuildContext context, WidgetRef ref, PersonNode person) {
-    final seatsController =
+  void _editVehicle(BuildContext context, WidgetRef ref) {
+    final seatsCtrl =
         TextEditingController(text: person.vehicleSeats?.toString() ?? '');
     bool hasVehicle = person.hasVehicle;
-
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
@@ -326,7 +263,7 @@ class _BasicInfoSection extends ConsumerWidget {
               ),
               if (hasVehicle)
                 TextField(
-                  controller: seatsController,
+                  controller: seatsCtrl,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(labelText: '座位数'),
                 ),
@@ -334,16 +271,16 @@ class _BasicInfoSection extends ConsumerWidget {
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('取消')),
             TextButton(
               onPressed: () {
                 Navigator.pop(ctx);
                 ref.read(personsProvider.notifier).upsert(
                       person.copyWith(
                         hasVehicle: hasVehicle,
-                        vehicleSeats: hasVehicle
-                            ? int.tryParse(seatsController.text)
-                            : null,
+                        vehicleSeats:
+                            hasVehicle ? int.tryParse(seatsCtrl.text) : null,
                         updatedAt: DateTime.now(),
                       ),
                     );
@@ -355,196 +292,55 @@ class _BasicInfoSection extends ConsumerWidget {
       ),
     );
   }
+}
 
-  void _editTextField(
-    BuildContext context, {
-    required String title,
-    required String hint,
-    required String? current,
-    required void Function(String) onSave,
-  }) {
-    final controller = TextEditingController(text: current ?? '');
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(title),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: InputDecoration(hintText: hint),
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              onSave(controller.text.trim());
-            },
-            child: const Text('保存'),
+// ── Person-specific tag chips ─────────────────────────────────────────────────
+
+class _SentimentSelector extends StatelessWidget {
+  final TagSentiment value;
+  final ValueChanged<TagSentiment> onChanged;
+
+  const _SentimentSelector(
+      {required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: TagSentiment.values.map((s) {
+        final selected = value == s;
+        final color = _sentimentColor(s);
+        return Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: ChoiceChip(
+            label: Text(_sentimentLabel(s)),
+            selected: selected,
+            selectedColor: color.withValues(alpha: 0.25),
+            labelStyle: TextStyle(
+              color: selected ? color : null,
+              fontWeight:
+                  selected ? FontWeight.w600 : FontWeight.normal,
+            ),
+            onSelected: (_) => onChanged(s),
           ),
-        ],
-      ),
+        );
+      }).toList(),
     );
   }
 }
 
-class _TagsSection extends ConsumerWidget {
-  final String personId;
-  final AsyncValue<List<PreferenceTag>> tagsAsync;
-
-  const _TagsSection({required this.personId, required this.tagsAsync});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _sectionLabel(context, '偏好标签'),
-        const SizedBox(height: 12),
-        tagsAsync.when(
-          loading: () => const SizedBox(
-              height: 32,
-              child: Center(
-                  child: CircularProgressIndicator(strokeWidth: 2))),
-          error: (e, _) => Text('$e',
-              style: const TextStyle(color: Colors.red)),
-          data: (tags) {
-            // Exclude the taste tag — it lives in basic info
-            final prefTags =
-                tags.where((t) => t.context != _tasteContext).toList();
-            if (prefTags.isEmpty) {
-              return Text(
-                '还没有偏好标签',
-                style: TextStyle(color: Colors.grey.shade400),
-              );
-            }
-            return Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: prefTags
-                  .map((tag) => _TagChip(
-                        tag: tag,
-                        onDelete: () => ref
-                            .read(personTagsProvider(personId).notifier)
-                            .removeTag(tag.id),
-                      ))
-                  .toList(),
-            );
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class _AddTagSection extends StatelessWidget {
-  final TextEditingController controller;
-  final TagSentiment sentiment;
-  final ValueChanged<TagSentiment> onSentimentChanged;
-  final VoidCallback onSubmit;
-
-  const _AddTagSection({
-    required this.controller,
-    required this.sentiment,
-    required this.onSentimentChanged,
-    required this.onSubmit,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _sectionLabel(context, '添加标签'),
-        const SizedBox(height: 12),
-        // Sentiment selector
-        Row(
-          children: TagSentiment.values.map((s) {
-            final selected = sentiment == s;
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ChoiceChip(
-                label: Text(_sentimentLabel(s)),
-                selected: selected,
-                selectedColor: _sentimentColor(s).withOpacity(0.25),
-                labelStyle: TextStyle(
-                  color: selected ? _sentimentColor(s) : null,
-                  fontWeight:
-                      selected ? FontWeight.w600 : FontWeight.normal,
-                ),
-                onSelected: (_) => onSentimentChanged(s),
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 10),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-              child: TextField(
-                controller: controller,
-                minLines: 1,
-                maxLines: 3,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => onSubmit(),
-                decoration: InputDecoration(
-                  hintText: '例：不喜欢嘈杂的地方、爱吃日料',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 12),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            FilledButton(
-              onPressed: onSubmit,
-              style: FilledButton.styleFrom(
-                  minimumSize: const Size(56, 48),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14))),
-              child: const Icon(Icons.add),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _InfoChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _InfoChip(
-      {required this.icon, required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return ActionChip(
-      avatar: Icon(icon, size: 16),
-      label: Text(label),
-      onPressed: onTap,
-    );
-  }
-}
-
-class _TagChip extends StatelessWidget {
+class _PersonTagChip extends StatelessWidget {
   final PreferenceTag tag;
   final VoidCallback onDelete;
 
-  const _TagChip({required this.tag, required this.onDelete});
+  const _PersonTagChip({required this.tag, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
     final color = _sentimentColor(tag.sentiment);
     return Chip(
       label: Text(tag.label),
-      backgroundColor: color.withOpacity(0.12),
-      side: BorderSide(color: color.withOpacity(0.35)),
+      backgroundColor: color.withValues(alpha: 0.12),
+      side: BorderSide(color: color.withValues(alpha: 0.35)),
       deleteIcon: Icon(Icons.close, size: 15, color: color),
       onDeleted: onDelete,
     );
@@ -552,14 +348,6 @@ class _TagChip extends StatelessWidget {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-Widget _sectionLabel(BuildContext context, String text) => Text(
-      text,
-      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
-            letterSpacing: 0.5,
-          ),
-    );
 
 String _sentimentLabel(TagSentiment s) => switch (s) {
       TagSentiment.positive => '喜好 ✓',

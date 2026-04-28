@@ -12,7 +12,7 @@ class PlaceCard extends StatelessWidget {
     final color = placeCategoryColor(place.category);
 
     return Material(
-      color: color.withOpacity(0.12),
+      color: color.withValues(alpha: 0.12),
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         onTap: onTap,
@@ -73,6 +73,21 @@ Color placeCategoryColor(PlaceCategory category) => switch (category) {
       PlaceCategory.hotel => const Color(0xFF42A5F5),
       PlaceCategory.attraction => const Color(0xFFFFB300),
       PlaceCategory.other => const Color(0xFF78909C),
+    };
+
+String placeCategoryLabel(PlaceCategory category) => switch (category) {
+      PlaceCategory.restaurant => '餐厅',
+      PlaceCategory.cafe => '咖啡馆',
+      PlaceCategory.bar => '酒吧',
+      PlaceCategory.park => '公园',
+      PlaceCategory.museum => '博物馆',
+      PlaceCategory.cinema => '电影院',
+      PlaceCategory.shoppingMall => '购物中心',
+      PlaceCategory.outdoorActivity => '户外活动',
+      PlaceCategory.nightclub => '夜店',
+      PlaceCategory.hotel => '酒店',
+      PlaceCategory.attraction => '景点',
+      PlaceCategory.other => '其他',
     };
 
 IconData placeCategoryIcon(PlaceCategory category) => switch (category) {

@@ -12,7 +12,7 @@ class PersonCard extends StatelessWidget {
     final color = avatarColor(person.name);
 
     return Material(
-      color: color.withOpacity(0.12),
+      color: color.withValues(alpha: 0.12),
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         onTap: onTap,

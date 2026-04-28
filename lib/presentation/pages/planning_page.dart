@@ -53,6 +53,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     });
 
     return Scaffold(
+      // MainShell.Scaffold already handles resizeToAvoidBottomInset; setting
+      // it here too would subtract the keyboard height a second time.
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('规划'),
         centerTitle: false,

@@ -5,6 +5,7 @@ import 'package:tag4u/domain/entities/place_node.dart';
 import 'package:tag4u/domain/entities/preference_tag.dart';
 import 'package:tag4u/presentation/providers/app_providers.dart';
 import 'package:tag4u/presentation/providers/person_providers.dart';
+import 'package:tag4u/presentation/providers/place_providers.dart';
 import 'package:uuid/uuid.dart';
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -115,7 +116,7 @@ class PlanningChatNotifier extends Notifier<PlanningChatState> {
         !state.messages.any((m) => m.role == MessageRole.user);
     final promptContent =
         (state.selectedMembers.isNotEmpty && isFirstUserMsg)
-            ? _buildContextPrompt(trimmed)
+            ? await _buildContextPrompt(trimmed)
             : trimmed;
 
     _addMessage(ChatMessage(
@@ -145,12 +146,17 @@ class PlanningChatNotifier extends Notifier<PlanningChatState> {
   // ── Private helpers ─────────────────────────────────────────────────────────
 
   /// Builds a rich prompt that includes member preferences and selected places.
-  String _buildContextPrompt(String userText) {
+  Future<String> _buildContextPrompt(String userText) async {
     final members = state.selectedMembers;
     final places = state.selectedPlaces;
 
-    final memberLines = members.map((m) {
-      final tags = ref.read(personTagsProvider(m.id)).valueOrNull ?? [];
+    final allTags = await Future.wait(
+      members.map((m) => ref.read(personTagsProvider(m.id).future)),
+    );
+
+    final memberLines = List.generate(members.length, (i) {
+      final m = members[i];
+      final tags = allTags[i];
       final tagText = tags.isEmpty
           ? '无特别偏好'
           : tags.map((t) {
@@ -164,12 +170,25 @@ class PlanningChatNotifier extends Notifier<PlanningChatState> {
       return '${m.name}${m.mbti != null ? '（${m.mbti}）' : ''}：$tagText';
     }).join('\n');
 
+    final allDescriptors = await Future.wait(
+      places.map((p) => ref.read(placeDescriptorsProvider(p.id).future)),
+    );
+
     final placeLines = places.isEmpty
         ? '无指定地点'
-        : places
-            .map((p) =>
-                '- ${p.name}${p.address != null ? '（${p.address}）' : ''}')
-            .join('\n');
+        : List.generate(places.length, (i) {
+            final p = places[i];
+            final descs = allDescriptors[i];
+            final descText = descs.isEmpty
+                ? ''
+                : '，标签：${descs.map((d) => d.descriptor).join('、')}';
+            final extra = [
+              if (p.address != null) p.address!,
+              if (p.priceLevel != null) '价位${p.priceLevel}',
+              if (p.personalNote != null) p.personalNote!,
+            ].join('；');
+            return '- ${p.name}${extra.isNotEmpty ? '（$extra）' : ''}$descText';
+          }).join('\n');
 
     return '''
 参与人员（${members.length}人）及偏好：

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tag4u/domain/entities/place_node.dart';
+import 'package:tag4u/domain/entities/semantic_descriptor.dart';
 import 'package:tag4u/presentation/providers/app_providers.dart';
 
 // ── Place list ────────────────────────────────────────────────────────────────
@@ -33,3 +34,43 @@ final placesByCategoryProvider =
           .toList() ??
       [];
 });
+
+/// Derives a single place by id from the cached list. Null if not found.
+final placeByIdProvider = Provider.family<PlaceNode?, String>((ref, id) {
+  try {
+    return ref
+        .watch(placesProvider)
+        .valueOrNull
+        ?.firstWhere((p) => p.id == id);
+  } catch (_) {
+    return null;
+  }
+});
+
+// ── Descriptors for a specific place ─────────────────────────────────────────
+
+final placeDescriptorsProvider = AsyncNotifierProviderFamily<
+    PlaceDescriptorsNotifier,
+    List<SemanticDescriptor>,
+    String>(PlaceDescriptorsNotifier.new);
+
+class PlaceDescriptorsNotifier
+    extends FamilyAsyncNotifier<List<SemanticDescriptor>, String> {
+  @override
+  Future<List<SemanticDescriptor>> build(String placeNodeId) async {
+    final result = await ref
+        .watch(placeRepositoryProvider)
+        .getDescriptorsForPlace(placeNodeId);
+    return result.fold((f) => throw Exception(f.message), (v) => v);
+  }
+
+  Future<void> addDescriptor(SemanticDescriptor descriptor) async {
+    await ref.read(placeRepositoryProvider).upsertDescriptor(descriptor);
+    ref.invalidateSelf();
+  }
+
+  Future<void> removeDescriptor(String descriptorId) async {
+    await ref.read(placeRepositoryProvider).deleteDescriptor(descriptorId);
+    ref.invalidateSelf();
+  }
+}
