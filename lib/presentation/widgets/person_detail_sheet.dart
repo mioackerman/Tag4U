@@ -106,12 +106,12 @@ class _Handle extends StatelessWidget {
   }
 }
 
-class _PersonHeader extends StatelessWidget {
+class _PersonHeader extends ConsumerWidget {
   final PersonNode person;
   const _PersonHeader({required this.person});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final color = avatarColor(person.name);
     return Row(
       children: [
@@ -125,14 +125,56 @@ class _PersonHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 14),
-        Text(
-          person.name,
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge
-              ?.copyWith(fontWeight: FontWeight.bold),
+        GestureDetector(
+          onTap: () => _editName(context, ref),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                person.name,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(width: 6),
+              Icon(Icons.edit_outlined,
+                  size: 16, color: Colors.grey.shade400),
+            ],
+          ),
         ),
       ],
+    );
+  }
+
+  void _editName(BuildContext context, WidgetRef ref) {
+    final controller = TextEditingController(text: person.name);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('修改名字'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(hintText: '名字'),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
+          TextButton(
+            onPressed: () {
+              final name = controller.text.trim();
+              Navigator.pop(ctx);
+              if (name.isEmpty || name == person.name) return;
+              ref.read(personsProvider.notifier).upsert(
+                    person.copyWith(name: name, updatedAt: DateTime.now()),
+                  );
+            },
+            child: const Text('保存'),
+          ),
+        ],
+      ),
     );
   }
 }
