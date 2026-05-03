@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tag4u/infrastructure/seeds/data_seeder.dart';
+import 'package:tag4u/presentation/pages/friends_page.dart';
 import 'package:tag4u/presentation/pages/match_page.dart';
-import 'package:tag4u/presentation/pages/planning_page.dart';
+import 'package:tag4u/presentation/pages/profile_page.dart';
 import 'package:tag4u/presentation/pages/tag_page.dart';
+import 'package:tag4u/presentation/providers/person_providers.dart';
 
 class MainShell extends ConsumerStatefulWidget {
   const MainShell({super.key});
@@ -18,14 +20,16 @@ class _MainShellState extends ConsumerState<MainShell> {
   @override
   void initState() {
     super.initState();
-    // Seed dummy data on first run (no-op if data already exists).
     ref.read(dataSeedProvider);
+    // Ensure self profile is created on first launch.
+    ref.read(selfPersonProvider);
   }
 
   static const _pages = <Widget>[
-    TagPage(),
+    ProfilePage(),
+    FriendsPage(),
     MatchPage(),
-    PlanningPage(),
+    TagPage(),
   ];
 
   @override
@@ -37,9 +41,14 @@ class _MainShellState extends ConsumerState<MainShell> {
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.label_outline),
-            selectedIcon: Icon(Icons.label),
-            label: 'Tag',
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: '我',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.people_outline),
+            selectedIcon: Icon(Icons.people),
+            label: '好友',
           ),
           NavigationDestination(
             icon: Icon(Icons.auto_awesome_outlined),
@@ -47,9 +56,9 @@ class _MainShellState extends ConsumerState<MainShell> {
             label: '匹配',
           ),
           NavigationDestination(
-            icon: Icon(Icons.explore_outlined),
-            selectedIcon: Icon(Icons.explore),
-            label: '计划',
+            icon: Icon(Icons.label_outline),
+            selectedIcon: Icon(Icons.label),
+            label: 'Tag',
           ),
         ],
       ),

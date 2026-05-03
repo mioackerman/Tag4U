@@ -13,7 +13,9 @@ import 'package:tag4u/domain/usecases/get_recommendations_usecase.dart';
 import 'package:tag4u/domain/usecases/plan_group_activity_usecase.dart';
 import 'package:tag4u/domain/usecases/update_preference_usecase.dart';
 import 'package:tag4u/infrastructure/agents/group_planning_agent.dart';
-import 'package:tag4u/infrastructure/llm/anthropic_client.dart';
+import 'package:tag4u/infrastructure/llm/claude_client.dart';
+import 'package:tag4u/infrastructure/llm/llm_client.dart';
+import 'package:tag4u/infrastructure/llm/openai_client.dart';
 import 'package:tag4u/infrastructure/reasoning/hard_constraint_engine.dart';
 import 'package:tag4u/infrastructure/reasoning/recommendation_pipeline.dart';
 import 'package:tag4u/infrastructure/reasoning/soft_constraint_engine.dart';
@@ -65,13 +67,24 @@ final recommendationRepositoryProvider = Provider<IRecommendationRepository>((re
 
 // ── Infrastructure ────────────────────────────────────────────────────────────
 
-/// Returns null when the key is missing — engine degrades gracefully.
-final anthropicClientProvider = Provider<AnthropicClient?>((ref) {
-  final key = dotenv.maybeGet('ANTHROPIC_API_KEY');
-  if (key == null || key.isEmpty || key == 'your-api-key-here') return null;
-  final client = AnthropicClient(apiKey: key);
-  ref.onDispose(client.dispose);
-  return client;
+/// Returns null when no key is configured — engine degrades gracefully.
+/// Priority: OPENAI_API_KEY → OpenAIClient; ANTHROPIC_API_KEY → ClaudeClient.
+final anthropicClientProvider = Provider<LLMClient?>((ref) {
+  final openaiKey = dotenv.maybeGet('OPENAI_API_KEY');
+  if (openaiKey != null && openaiKey.isNotEmpty && openaiKey != 'your-api-key-here') {
+    final client = OpenAIClient(apiKey: openaiKey);
+    ref.onDispose(client.dispose);
+    return client;
+  }
+
+  final anthropicKey = dotenv.maybeGet('ANTHROPIC_API_KEY');
+  if (anthropicKey != null && anthropicKey.isNotEmpty && anthropicKey != 'your-api-key-here') {
+    final client = ClaudeClient(apiKey: anthropicKey);
+    ref.onDispose(client.dispose);
+    return client;
+  }
+
+  return null;
 });
 
 final hardConstraintEngineProvider =

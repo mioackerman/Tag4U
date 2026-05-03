@@ -49,7 +49,12 @@ class AppDatabase extends _$AppDatabase {
         await _createIndexes();
       },
       onUpgrade: (m, from, to) async {
-        // Future migrations go here.
+        if (from < 2) {
+          await m.addColumn(
+            preferenceTagsTable,
+            preferenceTagsTable.isPublic,
+          );
+        }
       },
     );
   }

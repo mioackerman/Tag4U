@@ -31,8 +31,12 @@ class PreferenceTag extends Equatable {
   /// e.g. "on first dates", "when tired after work"
   final String? context;
 
-  /// Source of this tag: 'user_explicit', 'inferred', 'feedback_loop'.
+  /// Source of this tag: 'user_explicit', 'inferred', 'feedback_loop', 'imported'.
   final String source;
+
+  /// Whether this tag is visible to others when sharing a preference card.
+  /// Private tags (isPublic=false) are never included in exported cards.
+  final bool isPublic;
 
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -45,6 +49,7 @@ class PreferenceTag extends Equatable {
     this.weight = 0.5,
     this.context,
     this.source = 'user_explicit',
+    this.isPublic = true,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -57,6 +62,7 @@ class PreferenceTag extends Equatable {
     double? weight,
     String? context,
     String? source,
+    bool? isPublic,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -68,12 +74,15 @@ class PreferenceTag extends Equatable {
       weight: weight ?? this.weight,
       context: context ?? this.context,
       source: source ?? this.source,
+      isPublic: isPublic ?? this.isPublic,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [id, personNodeId, label, sentiment, weight, context, source, createdAt, updatedAt];
+  List<Object?> get props => [
+        id, personNodeId, label, sentiment, weight, context, source, isPublic,
+        createdAt, updatedAt,
+      ];
 }

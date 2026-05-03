@@ -185,7 +185,7 @@
           "nameInDart": "source",
           "declaration": {
             "source_uri": "package:tag4u/data/local/drift/tables/preference_tags_table.dart",
-            "offset": 730,
+            "offset": 743,
             "name": "source"
           },
           "typeConverter": null,
@@ -202,7 +202,37 @@
           },
           "overriddenJsonName": null,
           "referenceName": null,
-          "documentationComment": "/// 'user_explicit' | 'inferred' | 'feedback_loop'",
+          "documentationComment": "/// 'user_explicit' | 'inferred' | 'feedback_loop' | 'imported'",
+          "constraints": [],
+          "customConstraints": null
+        },
+        {
+          "sqlType": {
+            "builtin": "bool"
+          },
+          "nullable": false,
+          "nameInSql": "is_public",
+          "nameInDart": "isPublic",
+          "declaration": {
+            "source_uri": "package:tag4u/data/local/drift/tables/preference_tags_table.dart",
+            "offset": 892,
+            "name": "isPublic"
+          },
+          "typeConverter": null,
+          "clientDefaultCode": null,
+          "defaultArgument": {
+            "elements": [
+              "const ",
+              {
+                "lexeme": "Constant",
+                "import_uri": "package:drift/src/runtime/query_builder/query_builder.dart"
+              },
+              "(true)"
+            ]
+          },
+          "overriddenJsonName": null,
+          "referenceName": null,
+          "documentationComment": "/// Whether this tag is visible when sharing a preference card.",
           "constraints": [],
           "customConstraints": null
         },
@@ -215,7 +245,7 @@
           "nameInDart": "createdAt",
           "declaration": {
             "source_uri": "package:tag4u/data/local/drift/tables/preference_tags_table.dart",
-            "offset": 817,
+            "offset": 973,
             "name": "createdAt"
           },
           "typeConverter": null,
@@ -236,7 +266,7 @@
           "nameInDart": "updatedAt",
           "declaration": {
             "source_uri": "package:tag4u/data/local/drift/tables/preference_tags_table.dart",
-            "offset": 865,
+            "offset": 1021,
             "name": "updatedAt"
           },
           "typeConverter": null,

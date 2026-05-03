@@ -55,6 +55,7 @@ extension PreferenceTagMapper on PreferenceTagsTableData {
       weight: weight,
       context: context,
       source: source,
+      isPublic: isPublic,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
@@ -71,6 +72,7 @@ extension PreferenceTagEntityMapper on PreferenceTag {
       weight: Value(weight),
       context: Value(context),
       source: Value(source),
+      isPublic: Value(isPublic),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );

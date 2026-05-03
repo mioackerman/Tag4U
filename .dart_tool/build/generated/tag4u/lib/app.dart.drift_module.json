@@ -2,6 +2,6 @@
   "elements": {},
   "imports": [
     "package:flutter/material.dart",
-    "package:tag4u/presentation/pages/home_page.dart"
+    "package:tag4u/presentation/pages/main_shell.dart"
   ]
 }

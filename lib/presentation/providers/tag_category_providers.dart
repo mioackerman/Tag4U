@@ -14,8 +14,6 @@ class TagCategoriesNotifier extends Notifier<List<TagCategory>> {
   List<TagCategory> build() {
     return const [
       TagCategory(
-          id: 'friends', name: 'Friends', type: TagCategoryType.friends),
-      TagCategory(
           id: 'restaurants', name: '餐厅', type: TagCategoryType.restaurants),
     ];
   }
@@ -32,9 +30,9 @@ class TagCategoriesNotifier extends Notifier<List<TagCategory>> {
     ];
   }
 
-  /// Default categories (friends, restaurants) cannot be removed.
+  /// The restaurants category cannot be removed.
   void remove(String id) {
-    if (id == 'friends' || id == 'restaurants') return;
+    if (id == 'restaurants') return;
     state = state.where((c) => c.id != id).toList();
   }
 }

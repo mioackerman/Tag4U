@@ -3,7 +3,7 @@ import 'package:tag4u/core/constants/app_constants.dart';
 import 'package:tag4u/domain/entities/place_node.dart';
 import 'package:tag4u/domain/entities/semantic_descriptor.dart';
 import 'package:tag4u/domain/repositories/i_place_repository.dart';
-import 'package:tag4u/infrastructure/llm/anthropic_client.dart';
+import 'package:tag4u/infrastructure/llm/llm_client.dart';
 
 /// Scored place for the pipeline.
 class ScoredPlace {
@@ -23,11 +23,11 @@ class ScoredPlace {
 /// so they can be wired to an actual model (OpenAI, Anthropic, on-device).
 class SoftConstraintEngine {
   final IPlaceRepository _placeRepo;
-  final AnthropicClient? _llm;
+  final LLMClient? _llm;
 
   const SoftConstraintEngine({
     required IPlaceRepository placeRepo,
-    AnthropicClient? llmClient,
+    LLMClient? llmClient,
   })  : _placeRepo = placeRepo,
         _llm = llmClient;
 
@@ -125,7 +125,7 @@ Please write a practical itinerary for this group.
 
     try {
       return await _llm.complete(userMessage: prompt);
-    } on AnthropicException catch (e) {
+    } on LLMException catch (e) {
       // Degrade gracefully — return stub so the app still functions.
       return '${_itineraryStub(topPlaces, activityHint, memberCount)}\n\n> ⚠️ AI narrative unavailable (${e.statusCode}).';
     }

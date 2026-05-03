@@ -10,6 +10,7 @@
     "package:tag4u/domain/repositories/i_place_repository.dart",
     "package:tag4u/domain/repositories/i_recommendation_repository.dart",
     "package:tag4u/domain/usecases/base_usecase.dart",
+    "package:tag4u/infrastructure/agents/base_agent.dart",
     "package:tag4u/infrastructure/agents/group_planning_agent.dart"
   ]
 }

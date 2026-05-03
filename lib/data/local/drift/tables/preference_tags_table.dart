@@ -17,8 +17,11 @@ class PreferenceTagsTable extends Table {
   RealColumn get weight => real().withDefault(const Constant(0.5))();
   TextColumn get context => text().nullable()();
 
-  /// 'user_explicit' | 'inferred' | 'feedback_loop'
+  /// 'user_explicit' | 'inferred' | 'feedback_loop' | 'imported'
   TextColumn get source => text().withDefault(const Constant('user_explicit'))();
+
+  /// Whether this tag is visible when sharing a preference card.
+  BoolColumn get isPublic => boolean().withDefault(const Constant(true))();
 
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();

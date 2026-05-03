@@ -90,7 +90,7 @@
       "views": [],
       "includes": [],
       "queries": [],
-      "schema_version": 1,
+      "schema_version": 2,
       "daos": [
         {
           "library_uri": "package:tag4u/data/local/drift/daos/person_dao.dart",

@@ -1,6 +1,7 @@
 {
   "elements": {},
   "imports": [
+    "package:drift/drift.dart",
     "package:tag4u/data/local/drift/app_database.dart",
     "package:tag4u/domain/entities/group_memory.dart",
     "package:tag4u/domain/entities/relationship_edge.dart"

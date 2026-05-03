@@ -7,7 +7,7 @@ class AppConstants {
 
   // Drift database
   static const String dbFileName = 'tag4u.db';
-  static const int dbSchemaVersion = 1;
+  static const int dbSchemaVersion = 2;
 
   // Graph edge labels (well-known, but open to extension)
   static const String edgeDislikes = 'dislikes';

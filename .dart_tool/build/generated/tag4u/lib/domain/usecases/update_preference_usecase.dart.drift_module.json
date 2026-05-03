@@ -1,6 +1,7 @@
 {
   "elements": {},
   "imports": [
+    "package:dartz/dartz.dart",
     "package:tag4u/core/utils/typedef.dart",
     "package:tag4u/domain/entities/preference_tag.dart",
     "package:tag4u/domain/repositories/i_person_repository.dart",

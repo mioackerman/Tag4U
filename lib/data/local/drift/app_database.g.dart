@@ -1488,6 +1488,16 @@ class $PreferenceTagsTableTable extends PreferenceTagsTable
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant('user_explicit'));
+  static const VerificationMeta _isPublicMeta =
+      const VerificationMeta('isPublic');
+  @override
+  late final GeneratedColumn<bool> isPublic = GeneratedColumn<bool>(
+      'is_public', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_public" IN (0, 1))'),
+      defaultValue: const Constant(true));
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -1509,6 +1519,7 @@ class $PreferenceTagsTableTable extends PreferenceTagsTable
         weight,
         context,
         source,
+        isPublic,
         createdAt,
         updatedAt
       ];
@@ -1558,6 +1569,10 @@ class $PreferenceTagsTableTable extends PreferenceTagsTable
       context.handle(_sourceMeta,
           source.isAcceptableOrUnknown(data['source']!, _sourceMeta));
     }
+    if (data.containsKey('is_public')) {
+      context.handle(_isPublicMeta,
+          isPublic.isAcceptableOrUnknown(data['is_public']!, _isPublicMeta));
+    }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
@@ -1594,6 +1609,8 @@ class $PreferenceTagsTableTable extends PreferenceTagsTable
           .read(DriftSqlType.string, data['${effectivePrefix}context']),
       source: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}source'])!,
+      isPublic: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_public'])!,
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -1618,8 +1635,11 @@ class PreferenceTagsTableData extends DataClass
   final double weight;
   final String? context;
 
-  /// 'user_explicit' | 'inferred' | 'feedback_loop'
+  /// 'user_explicit' | 'inferred' | 'feedback_loop' | 'imported'
   final String source;
+
+  /// Whether this tag is visible when sharing a preference card.
+  final bool isPublic;
   final DateTime createdAt;
   final DateTime updatedAt;
   const PreferenceTagsTableData(
@@ -1630,6 +1650,7 @@ class PreferenceTagsTableData extends DataClass
       required this.weight,
       this.context,
       required this.source,
+      required this.isPublic,
       required this.createdAt,
       required this.updatedAt});
   @override
@@ -1644,6 +1665,7 @@ class PreferenceTagsTableData extends DataClass
       map['context'] = Variable<String>(context);
     }
     map['source'] = Variable<String>(source);
+    map['is_public'] = Variable<bool>(isPublic);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -1660,6 +1682,7 @@ class PreferenceTagsTableData extends DataClass
           ? const Value.absent()
           : Value(context),
       source: Value(source),
+      isPublic: Value(isPublic),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -1676,6 +1699,7 @@ class PreferenceTagsTableData extends DataClass
       weight: serializer.fromJson<double>(json['weight']),
       context: serializer.fromJson<String?>(json['context']),
       source: serializer.fromJson<String>(json['source']),
+      isPublic: serializer.fromJson<bool>(json['isPublic']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -1691,6 +1715,7 @@ class PreferenceTagsTableData extends DataClass
       'weight': serializer.toJson<double>(weight),
       'context': serializer.toJson<String?>(context),
       'source': serializer.toJson<String>(source),
+      'isPublic': serializer.toJson<bool>(isPublic),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -1704,6 +1729,7 @@ class PreferenceTagsTableData extends DataClass
           double? weight,
           Value<String?> context = const Value.absent(),
           String? source,
+          bool? isPublic,
           DateTime? createdAt,
           DateTime? updatedAt}) =>
       PreferenceTagsTableData(
@@ -1714,6 +1740,7 @@ class PreferenceTagsTableData extends DataClass
         weight: weight ?? this.weight,
         context: context.present ? context.value : this.context,
         source: source ?? this.source,
+        isPublic: isPublic ?? this.isPublic,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
@@ -1728,6 +1755,7 @@ class PreferenceTagsTableData extends DataClass
       weight: data.weight.present ? data.weight.value : this.weight,
       context: data.context.present ? data.context.value : this.context,
       source: data.source.present ? data.source.value : this.source,
+      isPublic: data.isPublic.present ? data.isPublic.value : this.isPublic,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -1743,6 +1771,7 @@ class PreferenceTagsTableData extends DataClass
           ..write('weight: $weight, ')
           ..write('context: $context, ')
           ..write('source: $source, ')
+          ..write('isPublic: $isPublic, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1751,7 +1780,7 @@ class PreferenceTagsTableData extends DataClass
 
   @override
   int get hashCode => Object.hash(id, personNodeId, label, sentiment, weight,
-      context, source, createdAt, updatedAt);
+      context, source, isPublic, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1763,6 +1792,7 @@ class PreferenceTagsTableData extends DataClass
           other.weight == this.weight &&
           other.context == this.context &&
           other.source == this.source &&
+          other.isPublic == this.isPublic &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -1776,6 +1806,7 @@ class PreferenceTagsTableCompanion
   final Value<double> weight;
   final Value<String?> context;
   final Value<String> source;
+  final Value<bool> isPublic;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -1787,6 +1818,7 @@ class PreferenceTagsTableCompanion
     this.weight = const Value.absent(),
     this.context = const Value.absent(),
     this.source = const Value.absent(),
+    this.isPublic = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -1799,6 +1831,7 @@ class PreferenceTagsTableCompanion
     this.weight = const Value.absent(),
     this.context = const Value.absent(),
     this.source = const Value.absent(),
+    this.isPublic = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
@@ -1815,6 +1848,7 @@ class PreferenceTagsTableCompanion
     Expression<double>? weight,
     Expression<String>? context,
     Expression<String>? source,
+    Expression<bool>? isPublic,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -1827,6 +1861,7 @@ class PreferenceTagsTableCompanion
       if (weight != null) 'weight': weight,
       if (context != null) 'context': context,
       if (source != null) 'source': source,
+      if (isPublic != null) 'is_public': isPublic,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -1841,6 +1876,7 @@ class PreferenceTagsTableCompanion
       Value<double>? weight,
       Value<String?>? context,
       Value<String>? source,
+      Value<bool>? isPublic,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
       Value<int>? rowid}) {
@@ -1852,6 +1888,7 @@ class PreferenceTagsTableCompanion
       weight: weight ?? this.weight,
       context: context ?? this.context,
       source: source ?? this.source,
+      isPublic: isPublic ?? this.isPublic,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -1882,6 +1919,9 @@ class PreferenceTagsTableCompanion
     if (source.present) {
       map['source'] = Variable<String>(source.value);
     }
+    if (isPublic.present) {
+      map['is_public'] = Variable<bool>(isPublic.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -1904,6 +1944,7 @@ class PreferenceTagsTableCompanion
           ..write('weight: $weight, ')
           ..write('context: $context, ')
           ..write('source: $source, ')
+          ..write('isPublic: $isPublic, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -5314,6 +5355,7 @@ typedef $$PreferenceTagsTableTableCreateCompanionBuilder
   Value<double> weight,
   Value<String?> context,
   Value<String> source,
+  Value<bool> isPublic,
   required DateTime createdAt,
   required DateTime updatedAt,
   Value<int> rowid,
@@ -5327,6 +5369,7 @@ typedef $$PreferenceTagsTableTableUpdateCompanionBuilder
   Value<double> weight,
   Value<String?> context,
   Value<String> source,
+  Value<bool> isPublic,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<int> rowid,
@@ -5379,6 +5422,9 @@ class $$PreferenceTagsTableTableFilterComposer
 
   ColumnFilters<String> get source => $composableBuilder(
       column: $table.source, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isPublic => $composableBuilder(
+      column: $table.isPublic, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
@@ -5434,6 +5480,9 @@ class $$PreferenceTagsTableTableOrderingComposer
   ColumnOrderings<String> get source => $composableBuilder(
       column: $table.source, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<bool> get isPublic => $composableBuilder(
+      column: $table.isPublic, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 
@@ -5487,6 +5536,9 @@ class $$PreferenceTagsTableTableAnnotationComposer
 
   GeneratedColumn<String> get source =>
       $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<bool> get isPublic =>
+      $composableBuilder(column: $table.isPublic, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -5548,6 +5600,7 @@ class $$PreferenceTagsTableTableTableManager extends RootTableManager<
             Value<double> weight = const Value.absent(),
             Value<String?> context = const Value.absent(),
             Value<String> source = const Value.absent(),
+            Value<bool> isPublic = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
@@ -5560,6 +5613,7 @@ class $$PreferenceTagsTableTableTableManager extends RootTableManager<
             weight: weight,
             context: context,
             source: source,
+            isPublic: isPublic,
             createdAt: createdAt,
             updatedAt: updatedAt,
             rowid: rowid,
@@ -5572,6 +5626,7 @@ class $$PreferenceTagsTableTableTableManager extends RootTableManager<
             Value<double> weight = const Value.absent(),
             Value<String?> context = const Value.absent(),
             Value<String> source = const Value.absent(),
+            Value<bool> isPublic = const Value.absent(),
             required DateTime createdAt,
             required DateTime updatedAt,
             Value<int> rowid = const Value.absent(),
@@ -5584,6 +5639,7 @@ class $$PreferenceTagsTableTableTableManager extends RootTableManager<
             weight: weight,
             context: context,
             source: source,
+            isPublic: isPublic,
             createdAt: createdAt,
             updatedAt: updatedAt,
             rowid: rowid,
